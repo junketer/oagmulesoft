@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ftp="http://www.mulesoft.org/schema/mule/ee/ftp" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:smtp="http://www.mulesoft.org/schema/mule/smtp" xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml" xmlns:wmq="http://www.mulesoft.org/schema/mule/ee/wmq" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.5.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/wmq http://www.mulesoft.org/schema/mule/ee/wmq/current/mule-wmq-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd
+http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/ftp http://www.mulesoft.org/schema/mule/ee/ftp/current/mule-ftp-ee.xsd">
+    <wmq:connector name="WMQ" hostName="uk01dv11ap" port="1425" queueManager="DEVNTPQM" validateConnections="true" doc:name="WMQ"/>
+    <vm:connector name="VM" validateConnections="true" doc:name="VM">
+        <vm:queue-profile maxOutstandingMessages="500"/>
+    </vm:connector>
+    <vm:endpoint exchange-pattern="one-way" path="test_vm" name="VM1" doc:name="VM"/>
+    <mulexml:jaxb-context name="OFSInboundXML" packageNames="com.oag.ofs.inbound.xml" doc:name="JAXB Context"/>
+    <flow name="starfilereaderFlow1" doc:name="starfilereaderFlow1">
+        <file:inbound-endpoint path="k:\OFS\Data\in\"  moveToDirectory="k:\OFS\Data\out\" responseTimeout="10000" doc:name="File">
+        </file:inbound-endpoint>
+        <file:file-to-string-transformer doc:name="File to String"/>
+        <custom-transformer class="com.oag.ofs.mvt.transform.MVTOrASMTransformer" doc:name="MVTorASMTransformer"/>
+        <mulexml:object-to-xml-transformer doc:name="MVTorASM to XML"/>
+        <wmq:outbound-endpoint queue="AD_DS_SERVICE_QIN" connector-ref="WMQ" doc:name="WMQ"/>
+    </flow>
+    <flow name="starfilereaderFlow2" doc:name="starfilereaderFlow2">
+        <wmq:inbound-endpoint queue="AD_DS_SERVICE_QIN" connector-ref="WMQ" doc:name="Inbound_WMQ"/>
+        <mulexml:xml-to-object-transformer returnClass="com.oag.ofs.inbound.xml.FIMSStatusInbound" doc:name="XML to Object"/>
+        <custom-transformer class="com.oag.ofs.mvt.transform.OFSInboundOutboundTransformer" doc:name="Inbound2OutboundXML"/>
+        <mulexml:object-to-xml-transformer doc:name="Java2XML"/>
+        <http:outbound-endpoint exchange-pattern="request-response" host="djt-test.herokuapp.com" port="80" path="oagService/staralliance" method="POST" doc:name="HTTP"/>
+    </flow>
+</mule>
