@@ -10,8 +10,8 @@
             <property name="embeddedMode"/>
             <property name="redeliveryHandlerFactory-ref"/>
             <property name="connectionFactory-ref"/>
-            <property name="durable"/>
             <property name="maxRedelivery"/>
+            <property name="durable"/>
             <property name="password"/>
             <property name="username"/>
             <property name="name" value="WMQ"/>
@@ -91,15 +91,22 @@
             <property name="auxiliary;index" value="5"/>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="starfilereaderFlow1" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="91ed5f46-1dcc-4f36-bbb7-e2b6653d0f5a">
+    <flow SubFlow="false" name="starfilereaderFlow1" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="1c197831-c423-47f7-9716-786ee2e23ead">
         <properties>
-            <property name="initialState"/>
-            <property name="processingStrategy2"/>
-            <property name="processingStrategy"/>
-            <property name="bussinessEventsLabel"/>
-            <property name="tracking:enable-default-events"/>
+            <property name="processingStrategy2" value=""/>
+            <property name="initialState" value=""/>
+            <property name="auxiliary;erased;initialState" value="true"/>
+            <property name="bussinessEventsLabel" value=""/>
+            <property name="tracking:enable-default-events" value="false"/>
+            <property name="auxiliary;erased;processingStrategy2" value="true"/>
             <property name="auxiliary;index" value="6"/>
+            <property name="updated"/>
+            <property-collection name="@http://www.mulesoft.org/schema/mule/ee/tracking/transaction;7900721">
+                <property name="id" value=""/>
+                <property name="isProcessed$$$$ " value="true"/>
+            </property-collection>
         </properties>
+        <description></description>
         <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#1">
             <graphicalData x="0" y="0" width="0" height="0"/>
             <endpoint direction="Inbound" message-exchange-pattern="OneWay" name="File" type="http://www.mulesoft.org/schema/mule/file/endpoint" entity-id="File#1">
@@ -117,7 +124,7 @@
                     <property name="transformer-refs"/>
                     <property name="moveToDirectory" value="k:\OFS\Data\out\"/>
                     <property name="address"/>
-                    <property name="fileAge"/>
+                    <property name="fileAge" value="1000"/>
                     <property name="path" value="k:\OFS\Data\in\"/>
                     <property name="encoding"/>
                     <property name="outputPattern"/>
@@ -127,13 +134,33 @@
                     <property name="connector-ref"/>
                 </properties>
             </endpoint>
+            <endpoint direction="Outbound" message-exchange-pattern="RequestResponse" name="UDP" type="http://www.mulesoft.org/schema/mule/udp/endpoint" entity-id="UDP#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="port" value="80"/>
+                    <property name="host" value="localhost"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="exchange-pattern" value="request-response"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="address"/>
+                    <property name="encoding"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="auxiliary;index" value="8"/>
+                    <property name="responseTimeout" value="10000"/>
+                    <property name="mimeType"/>
+                    <property name="connector-ref"/>
+                </properties>
+            </endpoint>
             <pattern name="File to String" type="http://www.mulesoft.org/schema/mule/file/file-to-string-transformer" entity-id="File to String#1">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
                     <property name="returnClass"/>
                     <property name="ignoreBadInput"/>
                     <property name="encoding"/>
-                    <property name="auxiliary;index" value="8"/>
+                    <property name="auxiliary;index" value="9"/>
                     <property name="mimeType"/>
                 </properties>
             </pattern>
@@ -144,7 +171,7 @@
                     <property name="ignoreBadInput"/>
                     <property name="encoding"/>
                     <property name="class" value="com.oag.ofs.mvt.transform.MVTOrASMTransformer"/>
-                    <property name="auxiliary;index" value="9"/>
+                    <property name="auxiliary;index" value="10"/>
                     <property name="mimeType"/>
                 </properties>
             </pattern>
@@ -156,7 +183,7 @@
                     <property name="driverClass"/>
                     <property name="encoding"/>
                     <property name="acceptMuleMessage"/>
-                    <property name="auxiliary;index" value="10"/>
+                    <property name="auxiliary;index" value="11"/>
                     <property name="mimeType"/>
                 </properties>
             </pattern>
@@ -170,9 +197,9 @@
                     <property name="disableTransportTransformer"/>
                     <property name="messageType"/>
                     <property name="disableTemporaryReplyToDestinations"/>
-                    <property name="timeToLive"/>
                     <property name="exchange-pattern"/>
                     <property name="tracking:enable-default-events"/>
+                    <property name="timeToLive"/>
                     <property name="ref"/>
                     <property name="transformer-refs"/>
                     <property name="persistentDelivery"/>
@@ -181,7 +208,7 @@
                     <property name="encoding"/>
                     <property name="responseTransformer-refs"/>
                     <property name="targetClient"/>
-                    <property name="auxiliary;index" value="11"/>
+                    <property name="auxiliary;index" value="12"/>
                     <property name="responseTimeout"/>
                     <property name="mimeType"/>
                     <property name="connector-ref" value="WMQ"/>
@@ -189,14 +216,14 @@
             </endpoint>
         </lane>
     </flow>
-    <flow SubFlow="false" name="starfilereaderFlow2" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="3cabd00a-66ce-480e-863a-dfd37a68d759">
+    <flow SubFlow="false" name="starfilereaderFlow2" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="6d235c85-025b-43df-9eab-e36dd37dd0e2">
         <properties>
             <property name="initialState"/>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
             <property name="bussinessEventsLabel"/>
             <property name="tracking:enable-default-events"/>
-            <property name="auxiliary;index" value="12"/>
+            <property name="auxiliary;index" value="13"/>
         </properties>
         <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#2">
             <graphicalData x="0" y="0" width="0" height="0"/>
@@ -210,9 +237,9 @@
                     <property name="disableTransportTransformer"/>
                     <property name="messageType"/>
                     <property name="disableTemporaryReplyToDestinations"/>
-                    <property name="timeToLive"/>
                     <property name="exchange-pattern"/>
                     <property name="tracking:enable-default-events"/>
+                    <property name="timeToLive"/>
                     <property name="ref"/>
                     <property name="transformer-refs"/>
                     <property name="persistentDelivery"/>
@@ -221,7 +248,7 @@
                     <property name="encoding"/>
                     <property name="responseTransformer-refs"/>
                     <property name="targetClient"/>
-                    <property name="auxiliary;index" value="13"/>
+                    <property name="auxiliary;index" value="14"/>
                     <property name="responseTimeout"/>
                     <property name="mimeType"/>
                     <property name="connector-ref" value="WMQ"/>
@@ -234,7 +261,7 @@
                     <property name="ignoreBadInput"/>
                     <property name="driverClass"/>
                     <property name="encoding"/>
-                    <property name="auxiliary;index" value="14"/>
+                    <property name="auxiliary;index" value="15"/>
                     <property name="mimeType"/>
                 </properties>
             </pattern>
@@ -245,7 +272,7 @@
                     <property name="ignoreBadInput"/>
                     <property name="encoding"/>
                     <property name="class" value="com.oag.ofs.mvt.transform.OFSInboundOutboundTransformer"/>
-                    <property name="auxiliary;index" value="15"/>
+                    <property name="auxiliary;index" value="16"/>
                     <property name="mimeType"/>
                 </properties>
             </pattern>
@@ -257,7 +284,18 @@
                     <property name="driverClass"/>
                     <property name="encoding"/>
                     <property name="acceptMuleMessage"/>
-                    <property name="auxiliary;index" value="16"/>
+                    <property name="auxiliary;index" value="17"/>
+                    <property name="mimeType"/>
+                </properties>
+            </pattern>
+            <pattern name="JAXB Object to XML" type="http://www.mulesoft.org/schema/mule/xml/jaxb-object-to-xml-transformer" entity-id="JAXB Object to XML#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="returnClass"/>
+                    <property name="ignoreBadInput"/>
+                    <property name="jaxbContext-ref" value="OFSInboundXML"/>
+                    <property name="encoding"/>
+                    <property name="auxiliary;index" value="18"/>
                     <property name="mimeType"/>
                 </properties>
             </pattern>
@@ -284,7 +322,7 @@
                     <property name="responseTransformer-refs"/>
                     <property name="method" value="POST"/>
                     <property name="user"/>
-                    <property name="auxiliary;index" value="17"/>
+                    <property name="auxiliary;index" value="19"/>
                     <property name="responseTimeout"/>
                     <property name="mimeType"/>
                     <property name="connector-ref"/>
